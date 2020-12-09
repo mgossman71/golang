@@ -8,5 +8,5 @@ RUN go get github.com/gorilla/mux
 RUN go build main.go
 CMD mkdir .kube
 COPY config .kube/config
-EXPOSE 8080
 ENTRYPOINT [ "main" ] 
+EXPOSE 8080
