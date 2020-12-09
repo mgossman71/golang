@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	//"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -51,6 +50,11 @@ func getallnodes(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(cmd)
 }
+func getalldeploy(w http.ResponseWriter, r *http.Request) {
+	cmd, _ := exec.Command("kubectl", "get", "deploy", "--all-namespaces").Output()
+	w.WriteHeader(http.StatusOK)
+	w.Write(cmd)
+}
 func getallpods(w http.ResponseWriter, r *http.Request) {
 	cmd, _ := exec.Command("kubectl", "get", "pods", "--all-namespaces").Output()
 	w.WriteHeader(http.StatusOK)
@@ -75,6 +79,7 @@ func setupMuxRouter() *mux.Router {
 	api.HandleFunc("/getallns", getallns)
 	api.HandleFunc("/getonens", getonens).Queries("name", "{name}")
 	api.HandleFunc("/getallpods", getallpods)
+	api.HandleFunc("/getalldeploy", getalldeploy)
 	api.HandleFunc("/getallnodes", getallnodes)
 	api.HandleFunc("/getallrs", getallrs)
 	api.HandleFunc("/describers", describers).Queries("rsname", "{rsname}")
