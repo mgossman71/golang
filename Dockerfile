@@ -7,6 +7,6 @@ RUN go get github.com/gorilla/handlers
 RUN go get github.com/gorilla/mux
 RUN go build main.go
 CMD mkdir .kube
-COPY k8s0 .kube/config
+COPY config .kube/config
 EXPOSE 8080
 ENTRYPOINT [ "main" ] 
