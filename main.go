@@ -115,6 +115,16 @@ func scaleSonarr(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(cmd)
 }
+func scaleGozznet(w http.ResponseWriter, r *http.Request) {
+	// kubectl scale -n $1 --replicas=$2 deployment/gozznet-old
+	param := mux.Vars(r)
+	replicas := param["replicas"]
+	nsname := param["nsname"]
+	a := "--replicas=" + replicas
+	cmd, _ := exec.Command("kubectl", "scale", "-n", nsname, a, "deployment/gozznet-old").Output()
+	w.WriteHeader(http.StatusOK)
+	w.Write(cmd)
+}
 func setupMuxRouter() *mux.Router {
 	router := mux.NewRouter()
 	api := router.PathPrefix("/api/v1").Subrouter()
@@ -143,6 +153,7 @@ func setupMuxRouter() *mux.Router {
 	apiScale.HandleFunc("/sabnzb", scaleSabnzb).Queries("replicas", "{replicas}", "nsname", "{nsname}")
 	apiScale.HandleFunc("/cp", scaleCp).Queries("replicas", "{replicas}", "nsname", "{nsname}")
 	apiScale.HandleFunc("/sonarr", scaleSonarr).Queries("replicas", "{replicas}", "nsname", "{nsname}")
+	apiScale.HandleFunc("/gozznet", scaleGozznet).Queries("replicas", "{replicas}", "nsname", "{nsname}")
 	return router
 }
 func main() {
