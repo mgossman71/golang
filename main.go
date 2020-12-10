@@ -53,7 +53,7 @@ func getalldeploy(w http.ResponseWriter, r *http.Request) {
 	w.Write(cmd)
 }
 func getallpods(w http.ResponseWriter, r *http.Request) {
-	cmd, _ := exec.Command("kubectl", "get", "pods", "--all-namespaces").Output()
+	cmd, _ := exec.Command("kubectl", "get", "pods", "--all-namespaces", "-o", "wide").Output()
 	w.WriteHeader(http.StatusOK)
 	w.Write(cmd)
 }
