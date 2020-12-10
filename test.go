@@ -1,12 +1,12 @@
-package main
+// package main
 
-import "fmt"
+// import "fmt"
 
-func main() {
-	a := "yes"
-	b := "no"
-	c := a + "/" + b
+// func main() {
+// 	a := "yes"
+// 	b := "no"
+// 	c := a + "/" + b
 
-	fmt.Println(c)
+// 	fmt.Println(c)
 
-}
+// }

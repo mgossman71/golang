@@ -85,9 +85,41 @@ func describedeploy(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(cmd)
 }
+func scaleSabnzb(w http.ResponseWriter, r *http.Request) {
+	// kubectl scale -n $1 --replicas=$2 deployment/sabnzbd-deployment
+	param := mux.Vars(r)
+	replicas := param["replicas"]
+	nsname := param["nsname"]
+	a := "--replicas=" + replicas
+	cmd, _ := exec.Command("kubectl", "scale", "-n", nsname, a, "deployment/sabnzbd-deployment").Output()
+	w.WriteHeader(http.StatusOK)
+	w.Write(cmd)
+}
+func scaleCp(w http.ResponseWriter, r *http.Request) {
+	// kubectl scale -n $1 --replicas=$2 deployment/couchpotato-deployment
+	param := mux.Vars(r)
+	replicas := param["replicas"]
+	nsname := param["nsname"]
+	a := "--replicas=" + replicas
+	cmd, _ := exec.Command("kubectl", "scale", "-n", nsname, a, "deployment/couchpotato-deployment").Output()
+	w.WriteHeader(http.StatusOK)
+	w.Write(cmd)
+}
+func scaleSonarr(w http.ResponseWriter, r *http.Request) {
+	// kubectl scale -n $1 --replicas=$2 deployment/sonarr-deployment
+	param := mux.Vars(r)
+	replicas := param["replicas"]
+	nsname := param["nsname"]
+	a := "--replicas=" + replicas
+	cmd, _ := exec.Command("kubectl", "scale", "-n", nsname, a, "deployment/sonarr-deployment").Output()
+	w.WriteHeader(http.StatusOK)
+	w.Write(cmd)
+}
 func setupMuxRouter() *mux.Router {
 	router := mux.NewRouter()
 	api := router.PathPrefix("/api/v1").Subrouter()
+	apiScale := router.PathPrefix("/api/v1/scale").Subrouter()
+
 	apiGeneric := router.PathPrefix("/api").Subrouter()
 
 	apiGeneric.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
@@ -105,6 +137,9 @@ func setupMuxRouter() *mux.Router {
 	api.HandleFunc("/describepod", describepod).Queries("nsname", "{nsname}", "podname", "{podname}")
 	api.HandleFunc("/describedeploy", describedeploy).Queries("nsname", "{nsname}", "deployname", "{deployname}")
 	api.HandleFunc("/updateimage", updateimage).Queries("nsname", "{nsname}", "objtype", "{objtype}", "objname", "{objname}", "image", "{image}")
+	apiScale.HandleFunc("/sabnzb", scaleSabnzb).Queries("replicas", "{replicas}", "nsname", "{nsname}")
+	apiScale.HandleFunc("/cp", scaleCp).Queries("replicas", "{replicas}", "nsname", "{nsname}")
+	apiScale.HandleFunc("/sonarr", scaleSonarr).Queries("replicas", "{replicas}", "nsname", "{nsname}")
 	return router
 }
 func main() {
