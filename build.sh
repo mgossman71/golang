@@ -1,5 +1,5 @@
 #!/bin/bash
-version=v1.2
+version=v1.4
 
 docker build . -t mgossman71/k8srelay:$version
 docker build . -t mgossman71/k8srelay:latest
