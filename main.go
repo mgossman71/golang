@@ -111,8 +111,8 @@ func main() {
 
 	muxRouter := setupMuxRouter()
 	loggedRouter := handlers.LoggingHandler(os.Stdout, muxRouter)
-	// err := http.ListenAndServe(":8080", loggedRouter)
-	err := http.ListenAndServe(":32106", loggedRouter)
+	err := http.ListenAndServe(":8080", loggedRouter)
+	// err := http.ListenAndServe(":32106", loggedRouter)
 	if err != nil {
 		fmt.Println(err)
 	}
