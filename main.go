@@ -19,18 +19,15 @@ func describepod(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(cmd)
 }
-
 func myhandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Hey there!!"))
 }
-
 func getallns(w http.ResponseWriter, r *http.Request) {
 	cmd, _ := exec.Command("kubectl", "get", "ns").Output()
 	w.WriteHeader(http.StatusOK)
 	w.Write(cmd)
 }
-
 func getonens(w http.ResponseWriter, r *http.Request) {
 	param := mux.Vars(r)
 	name := param["name"]
@@ -65,7 +62,29 @@ func getallrs(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(cmd)
 }
+func updateimage(w http.ResponseWriter, r *http.Request) {
+	// kubectl set image -n default deployment/gozznet-old gozznet-old=mgossman71/gozznet-old:v4
+	param := mux.Vars(r)
+	nsname := param["nsname"]
+	objtype := param["objtype"]
+	objname := param["objname"]
+	image := param["image"]
+	a := objtype + "/" + objname
+	b := objname + "=" + image
 
+	cmd, _ := exec.Command("kubectl", "set", "image", "-n", nsname, a, b).Output()
+	w.WriteHeader(http.StatusOK)
+	w.Write(cmd)
+}
+func describedeploy(w http.ResponseWriter, r *http.Request) {
+	param := mux.Vars(r)
+	nsname := param["nsname"]
+	deployname := param["deployname"]
+
+	cmd, _ := exec.Command("kubectl", "describe", "deploy", "-n", nsname, deployname).Output()
+	w.WriteHeader(http.StatusOK)
+	w.Write(cmd)
+}
 func setupMuxRouter() *mux.Router {
 	router := mux.NewRouter()
 	api := router.PathPrefix("/api/v1").Subrouter()
@@ -84,14 +103,16 @@ func setupMuxRouter() *mux.Router {
 	api.HandleFunc("/getallrs", getallrs)
 	api.HandleFunc("/describers", describers).Queries("rsname", "{rsname}")
 	api.HandleFunc("/describepod", describepod).Queries("nsname", "{nsname}", "podname", "{podname}")
+	api.HandleFunc("/describedeploy", describedeploy).Queries("nsname", "{nsname}", "deployname", "{deployname}")
+	api.HandleFunc("/updateimage", updateimage).Queries("nsname", "{nsname}", "objtype", "{objtype}", "objname", "{objname}", "image", "{image}")
 	return router
 }
-
 func main() {
 
 	muxRouter := setupMuxRouter()
 	loggedRouter := handlers.LoggingHandler(os.Stdout, muxRouter)
-	err := http.ListenAndServe(":8080", loggedRouter)
+	// err := http.ListenAndServe(":8080", loggedRouter)
+	err := http.ListenAndServe(":32106", loggedRouter)
 	if err != nil {
 		fmt.Println(err)
 	}
