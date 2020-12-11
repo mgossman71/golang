@@ -71,7 +71,6 @@ func updateimage(w http.ResponseWriter, r *http.Request) {
 	image := param["image"]
 	a := objtype + "/" + objname
 	b := objname + "=" + image
-
 	cmd, _ := exec.Command("kubectl", "set", "image", "-n", nsname, a, b).Output()
 	w.WriteHeader(http.StatusOK)
 	w.Write(cmd)
@@ -80,7 +79,6 @@ func describedeploy(w http.ResponseWriter, r *http.Request) {
 	param := mux.Vars(r)
 	nsname := param["nsname"]
 	deployname := param["deployname"]
-
 	cmd, _ := exec.Command("kubectl", "describe", "deploy", "-n", nsname, deployname).Output()
 	w.WriteHeader(http.StatusOK)
 	w.Write(cmd)
